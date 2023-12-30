@@ -1,8 +1,7 @@
 export default function Home() {
-
   return (
-    <main>
-      <h1>Hello World!</h1>
+    <main className="flex flex-col justify-center items-center h-[calc(100vh-56px)]">
+      <p>Hello!</p>
     </main>
-  )
+  );
 }
