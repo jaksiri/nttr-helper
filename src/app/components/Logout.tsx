@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { deleteCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -12,21 +13,20 @@ function Logout() {
       deleteCookie("pb_auth");
       localStorage.clear();
       router.push("/");
+      router.refresh();
     } catch (e) {
       setError("Failed to log out");
     }
   }
 
   return (
-    <div>
-      <button
-        onClick={onLogout}
-        className="text-red-600 px-3 py-1 rounded border border-red-600"
-      >
-        Logout
-      </button>
-      {error ? <p className="text-red-600">{error}</p> : null}
-    </div>
+    <Button
+      variant="outline"
+      onClick={onLogout}
+      className="text-red-600 px-3 py-1 rounded border border-red-600"
+    >
+      Logout
+    </Button>
   );
 }
 

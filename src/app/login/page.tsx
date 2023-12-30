@@ -68,6 +68,7 @@ function Page() {
                       type="email"
                       placeholder="Email"
                       name="email"
+                      autoComplete="off"
                       required
                     />
                   </div>
@@ -78,6 +79,7 @@ function Page() {
                       type="password"
                       placeholder="Password"
                       name="password"
+                      autoComplete="off"
                       required
                     />
                   </div>
@@ -103,11 +105,23 @@ function Page() {
                 <CardContent className="space-y-2">
                   <div className="space-y-1">
                     <Label htmlFor="username">Username</Label>
-                    <Input id="username" type="text" name="username" required />
+                    <Input
+                      id="username"
+                      type="text"
+                      name="username"
+                      autoComplete="username"
+                      required
+                    />
                   </div>
                   <div className="space-y-1">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" name="email" required />
+                    <Input
+                      id="email"
+                      type="email"
+                      name="email"
+                      autoComplete="email"
+                      required
+                    />
                   </div>
                   <div className="space-y-1">
                     <Label htmlFor="password">Password</Label>
@@ -115,6 +129,7 @@ function Page() {
                       id="password"
                       type="password"
                       name="password"
+                      autoComplete="new-password"
                       required
                     />
                   </div>
