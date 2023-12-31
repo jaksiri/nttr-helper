@@ -1,5 +1,6 @@
 "use server";
 import db from "@/db";
+import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -15,6 +16,13 @@ const registerSchema = z.object({
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z.string(),
+});
+
+const createGameSchema = z.object({
+  gameName: z
+    .string()
+    .min(3, { message: "Game name must be at least 3 characters long" }),
+  gameLength: z.string().min(1, { message: "Game length must not be empty" }),
 });
 
 export async function registerAction(prevState: any, formData: FormData) {
@@ -76,4 +84,38 @@ export async function loginAction(prevState: any, formData: FormData) {
   }
 
   redirect("/dashboard");
+}
+
+type createGameFormData = {
+  gameName: string;
+  gameLength: string;
+};
+
+export async function createGameAction(formData: createGameFormData) {
+  const validatedFields = createGameSchema.safeParse({
+    gameName: formData.gameName,
+    gameLength: formData.gameLength,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    const response = await db.createGame(
+      cookies(),
+      validatedFields.data.gameName,
+      validatedFields.data.gameLength
+    );
+    if (response) {
+      return {
+        message: "Game created successfully",
+        gameId: response,
+      };
+    }
+  } catch (err) {
+    throw new Error("Error creating game");
+  }
 }

@@ -89,6 +89,60 @@ export class DatabaseClient {
     this._pocketBase.authStore.loadFromCookie(cookie?.value || "");
     return this._pocketBase.authStore.model || null;
   }
+
+  async createGame(
+    cookieStore: ReadonlyRequestCookies,
+    gameName: string,
+    gameLength: string
+  ): Promise<string | null> {
+    console.log("Pockebase Create Game Function Called");
+    const cookie = cookieStore.get("pb_auth");
+    if (!cookie) {
+      return null;
+    }
+
+    this._pocketBase.authStore.loadFromCookie(cookie?.value || "");
+    const user = this._pocketBase.authStore.model;
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    try {
+      const response = await this._pocketBase.collection("games").create({
+        ownerId: user.id,
+        gameName,
+        gameLength,
+      });
+      console.log("New game created: ", response);
+      return response.collectionId;
+    } catch (err) {
+      console.error("Error creating game: ", err);
+      throw new Error("Error creating game");
+    }
+  }
+
+  async getGamesList(cookieStore: ReadonlyRequestCookies) {
+    const cookie = cookieStore.get("pb_auth");
+    if (!cookie) {
+      return null;
+    }
+
+    this._pocketBase.authStore.loadFromCookie(cookie?.value || "");
+    const user = this._pocketBase.authStore.model;
+    if (!user) {
+      throw new Error("Invalid Permissions");
+    }
+
+    try {
+      const response = await this._pocketBase
+        .collection("games")
+        .getFullList({ filter: `ownerId = "${user.id}"` });
+      return response;
+    } catch (err) {
+      console.error("Error getting games list: ", err);
+      throw new Error("Error getting games list");
+    }
+  }
 }
 
 const db = DatabaseClient.instance;

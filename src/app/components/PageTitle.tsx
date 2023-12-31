@@ -9,9 +9,9 @@ function PageTitle({
 }) {
   return (
     <>
-      <h1 className="text-3xl md:text-4xl font-bold">{titleText}</h1>
+      <h1 className="text-3xl md:text-4xl font-bold mb-2">{titleText}</h1>
       {children}
-      <hr className="my-4 w-full" />
+      <hr className="mt-2 mb-4 w-full" />
     </>
   );
 }
