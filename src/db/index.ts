@@ -143,6 +143,17 @@ export class DatabaseClient {
       throw new Error("Error getting games list");
     }
   }
+
+  async getGame(gameId: string) {
+    try {
+      const response = await this._pocketBase
+        .collection("games")
+        .getOne(gameId);
+      return response;
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 const db = DatabaseClient.instance;

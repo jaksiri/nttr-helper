@@ -15,16 +15,13 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -34,8 +31,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useToast } from "@/components/ui/use-toast";
-import { useFormState } from "react-dom";
 import { createGameAction } from "@/app/action";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   gameName: z.string().min(3, "Game Name must be at least 3 characters"),
@@ -49,6 +46,7 @@ const initialState = {
 
 export default function StartNewGame() {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -77,6 +75,7 @@ export default function StartNewGame() {
           description: `The game id is: ${res.gameId}`,
         });
         setIsOpen(false);
+        router.push(`/game/${res.gameId}`);
       });
   }
 

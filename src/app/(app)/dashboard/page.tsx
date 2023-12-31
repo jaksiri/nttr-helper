@@ -1,14 +1,16 @@
 import React from "react";
 import db from "@/db";
 import { cookies } from "next/headers";
-import PageTitle from "../components/PageTitle";
+import PageTitle from "../../components/PageTitle";
+import MainDiv from "../../components/MainDiv";
+import Link from "next/link";
 
 export default async function Dashboard() {
   const user = await db.getUser(cookies());
   const gamesData = await db.getGamesList(cookies());
 
   return (
-    <div className="p-4 w-full">
+    <MainDiv>
       <PageTitle titleText="Dashboard">
         {user ? <p>Current User: {user.username}</p> : null}
       </PageTitle>
@@ -16,12 +18,18 @@ export default async function Dashboard() {
       {gamesData ? (
         <>
           {gamesData.map((game) => (
-            <h2 key={game.gameName}>{game.gameName}</h2>
+            <Link
+              key={game.gameName}
+              href={`/game/${game.id}`}
+              className="block"
+            >
+              {game.gameName}
+            </Link>
           ))}
         </>
       ) : (
         <p>No games found</p>
       )}
-    </div>
+    </MainDiv>
   );
 }

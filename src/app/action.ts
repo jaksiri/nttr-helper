@@ -1,6 +1,5 @@
 "use server";
 import db from "@/db";
-import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -104,15 +103,15 @@ export async function createGameAction(formData: createGameFormData) {
   }
 
   try {
-    const response = await db.createGame(
+    const gameId = await db.createGame(
       cookies(),
       validatedFields.data.gameName,
       validatedFields.data.gameLength
     );
-    if (response) {
+    if (gameId) {
       return {
         message: "Game created successfully",
-        gameId: response,
+        gameId: gameId,
       };
     }
   } catch (err) {
