@@ -1,5 +1,6 @@
 "use server";
 import db from "@/db";
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -117,4 +118,10 @@ export async function createGameAction(formData: createGameFormData) {
   } catch (err) {
     throw new Error("Error creating game");
   }
+}
+
+export async function deleteGameAction(gameId: string) {
+  await db.deleteGame(cookies(), gameId);
+  revalidatePath("/dashboard");
+  redirect("/dashboard");
 }

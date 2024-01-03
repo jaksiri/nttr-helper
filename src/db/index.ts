@@ -8,24 +8,15 @@ import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adap
 export const POCKET_BASE_URL =
   process.env.POCKET_BASE_URL || "http://127.0.0.1:8090";
 
-export class DatabaseClient {
-  private static _instance: DatabaseClient;
-  private _pocketBase: PocketBase;
+class DatabaseClient {
+  private client: PocketBase;
 
-  private constructor() {
-    this._pocketBase = new PocketBase(POCKET_BASE_URL);
-  }
-
-  public static get instance(): DatabaseClient {
-    if (!DatabaseClient._instance) {
-      DatabaseClient._instance = new DatabaseClient();
-    }
-
-    return DatabaseClient._instance;
+  constructor() {
+    this.client = new PocketBase(POCKET_BASE_URL);
   }
 
   public get pocketBase(): PocketBase {
-    return this._pocketBase;
+    return this.client;
   }
 
   async authenticate(
@@ -33,7 +24,7 @@ export class DatabaseClient {
     password: string
   ): Promise<RecordAuthResponse<RecordModel>> {
     try {
-      const response = await this._pocketBase
+      const response = await this.client
         .collection("users")
         .authWithPassword(username, password);
 
@@ -54,7 +45,7 @@ export class DatabaseClient {
     password: string
   ): Promise<RecordModel> {
     try {
-      const response = await this._pocketBase.collection("users").create({
+      const response = await this.client.collection("users").create({
         username,
         email,
         password,
@@ -74,8 +65,8 @@ export class DatabaseClient {
       return false;
     }
 
-    this._pocketBase.authStore.loadFromCookie(cookie?.value || "");
-    return this._pocketBase.authStore.isValid || false;
+    this.client.authStore.loadFromCookie(cookie?.value || "");
+    return this.client.authStore.isValid || false;
   }
 
   async getUser(
@@ -86,8 +77,8 @@ export class DatabaseClient {
       return null;
     }
 
-    this._pocketBase.authStore.loadFromCookie(cookie?.value || "");
-    return this._pocketBase.authStore.model || null;
+    this.client.authStore.loadFromCookie(cookie?.value || "");
+    return this.client.authStore.model || null;
   }
 
   async createGame(
@@ -101,20 +92,20 @@ export class DatabaseClient {
       return null;
     }
 
-    this._pocketBase.authStore.loadFromCookie(cookie?.value || "");
-    const user = this._pocketBase.authStore.model;
+    this.client.authStore.loadFromCookie(cookie?.value || "");
+    const user = this.client.authStore.model;
     if (!user) {
       throw new Error("User not found");
     }
 
     try {
-      const response = await this._pocketBase.collection("games").create({
+      const response = await this.client.collection("games").create({
         ownerId: user.id,
         gameName,
         gameLength,
       });
       console.log("New game created: ", response);
-      return response.collectionId;
+      return response.id;
     } catch (err) {
       console.error("Error creating game: ", err);
       throw new Error("Error creating game");
@@ -124,17 +115,17 @@ export class DatabaseClient {
   async getGamesList(cookieStore: ReadonlyRequestCookies) {
     const cookie = cookieStore.get("pb_auth");
     if (!cookie) {
-      return null;
+      throw new Error("Invalid Permissions");
     }
 
-    this._pocketBase.authStore.loadFromCookie(cookie?.value || "");
-    const user = this._pocketBase.authStore.model;
+    this.client.authStore.loadFromCookie(cookie?.value || "");
+    const user = this.client.authStore.model;
     if (!user) {
       throw new Error("Invalid Permissions");
     }
 
     try {
-      const response = await this._pocketBase
+      const response = await this.client
         .collection("games")
         .getFullList({ filter: `ownerId = "${user.id}"` });
       return response;
@@ -144,11 +135,40 @@ export class DatabaseClient {
     }
   }
 
-  async getGame(gameId: string) {
+  async getGame(cookieStore: ReadonlyRequestCookies, gameId: string) {
+    const cookie = cookieStore.get("pb_auth");
+    if (!cookie) {
+      throw new Error("Invalid Permissions");
+    }
+
+    this.client.authStore.loadFromCookie(cookie?.value || "");
+    const user = this.client.authStore.model;
+    if (!user) {
+      throw new Error("Invalid Permissions");
+    }
+
     try {
-      const response = await this._pocketBase
-        .collection("games")
-        .getOne(gameId);
+      const response = await this.client.collection("games").getOne(gameId);
+      return response;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async deleteGame(cookieStore: ReadonlyRequestCookies, gameId: string) {
+    const cookie = cookieStore.get("pb_auth");
+    if (!cookie) {
+      throw new Error("Invalid Permissions");
+    }
+
+    this.client.authStore.loadFromCookie(cookie?.value || "");
+    const user = this.client.authStore.model;
+    if (!user) {
+      throw new Error("Invalid Permissions");
+    }
+
+    try {
+      const response = await this.client.collection("games").delete(gameId);
       return response;
     } catch (err) {
       throw err;
@@ -156,5 +176,5 @@ export class DatabaseClient {
   }
 }
 
-const db = DatabaseClient.instance;
+const db = new DatabaseClient();
 export default db;
