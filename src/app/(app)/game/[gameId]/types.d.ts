@@ -18,10 +18,11 @@ export type GameAction = {
 export type GameActionType =
   | "rent"
   | "food"
-  | "entertainment"
+  | "relax"
   | "work"
   | "other"
-  | "purchase";
+  | "purchase"
+  | "";
 
 export type Job = {
   id: string;

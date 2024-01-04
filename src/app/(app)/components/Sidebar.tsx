@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -35,9 +35,37 @@ const sideBarItems: Array<SidebarItem> = [
 
 function Sidebar() {
   const currentPath = usePathname();
+  const [isOpened, setIsOpened] = useState(true);
+  const [hiddenStateClass, setHiddenStateClass] = useState("");
+
+  useEffect(() => {
+    if (currentPath !== "/dashboard") {
+      setIsOpened(false);
+    } else {
+      setIsOpened(true);
+    }
+  }, [currentPath]);
+
+  useEffect(() => {
+    if (isOpened) {
+      setHiddenStateClass("");
+    } else {
+      setTimeout(() => {
+        setHiddenStateClass("hidden");
+      }, 300);
+    }
+  }, [isOpened]);
 
   return (
-    <div className=" px-6 py-4 border-r h-full md:min-w-[240px]">
+    <div
+      className={cn(
+        "px-6 py-4 border-r h-full md:min-w-[200px] transition-transform duration-300 z-10 bg-white",
+        isOpened
+          ? " translate-x-0"
+          : "-translate-x-full absolute top-15 left-0",
+        hiddenStateClass
+      )}
+    >
       <ul className="flex flex-col gap-4 w-full">
         <li>
           <StartNewGame />
