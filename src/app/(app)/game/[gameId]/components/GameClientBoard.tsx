@@ -57,8 +57,8 @@ export default function GameClientBoard({ gameId, gameLength }: Props) {
   }
 
   return (
-    <div className="w-full rounded grid grid-cols-10 grid-rows-3 gap-4">
-      <div className="flex flex-col col-span-7 gap-4">
+    <div className="w-full rounded grid grid-cols-10 grid-rows-5 gap-4">
+      <div className="flex flex-col col-span-8 gap-4">
         <ScheduleDisplay weeks={weeks} gameActions={gameActions} />
         <JobSelector
           currentJob={currentJob}
@@ -67,12 +67,12 @@ export default function GameClientBoard({ gameId, gameLength }: Props) {
       </div>
 
       {/* right block */}
-      <div className="flex flex-col gap-4 w-full col-span-3">
+      <div className="flex flex-col gap-4 w-full col-span-2 row-span-5">
         <Checklist />
       </div>
 
       {/* left block */}
-      <div className="flex flex-col col-span-10 space-y-4 row-span-2">
+      <div className="flex flex-col col-span-8 space-y-4 row-span-4">
         <KanbanBoard
           weeks={weeks}
           weeksId={weeksId}

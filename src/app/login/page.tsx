@@ -44,7 +44,7 @@ function Page() {
           priority
         />
       </div>
-      <main className="flex flex-col pt-[25%] items-center h-full w-full md:max-w-[600px] px-8 bg-white bg-opacity-60 relative backdrop-blur-sm md:bg-opacity-100 md:backdrop-blur-none">
+      <main className="flex flex-col pt-[20%] items-center h-full w-full md:max-w-[600px] px-8 bg-white bg-opacity-60 relative backdrop-blur-sm md:bg-opacity-100 md:backdrop-blur-none">
         <Tabs
           defaultValue={isRegister ? "register" : "login"}
           className="w-[400px]"

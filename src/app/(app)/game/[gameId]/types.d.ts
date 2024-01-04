@@ -22,6 +22,7 @@ export type GameActionType =
   | "work"
   | "other"
   | "purchase"
+  | "education"
   | "";
 
 export type Job = {

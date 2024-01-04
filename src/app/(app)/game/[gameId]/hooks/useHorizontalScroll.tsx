@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 
-const SCROLL_SENSITIVITY = 3;
+const SCROLL_SENSITIVITY = 4;
 
 export function useHorizontalScroll() {
   const elRef = useRef<HTMLDivElement>(null);

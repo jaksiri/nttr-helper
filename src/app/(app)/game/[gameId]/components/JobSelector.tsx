@@ -60,7 +60,7 @@ function JobSelector({
   }
 
   return (
-    <div className="flex flex-col gap-2 p-4 bg-blue-100 rounded">
+    <div className="flex flex-col gap-2 p-4 border-2 border-green-400 rounded-md">
       <h2 className="font-bold">Current Job</h2>
       <Select onValueChange={onJobChange} value={currentJob?.id || ""}>
         <SelectTrigger>

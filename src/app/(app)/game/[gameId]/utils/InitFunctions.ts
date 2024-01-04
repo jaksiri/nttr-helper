@@ -86,7 +86,7 @@ export function createGameActionDataArray(
       throw new Error("Invalid game length");
   }
 
-  for (let i = 0; i < numTurns; i++) {
+  for (let i = 1; i <= numTurns; i++) {
     if (i % 4 === 0 && i - 1 > 0) {
       tasksData.push({
         id: uuid(),
