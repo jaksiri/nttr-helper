@@ -66,20 +66,11 @@ export default function GameClientBoard({ gameId, gameLength }: Props) {
     }
   }, [gameActions, gameId, lastSaved]);
 
-  // State Mutation Functions
-  function changeCurrentJob(job: Job) {
-    setCurrentJob(job);
-    localStorage.setItem(`nttr-currentJob-${gameId}`, JSON.stringify(job));
-  }
-
   return (
     <div className="w-full rounded grid grid-cols-10 grid-rows-5 gap-4">
       <div className="flex flex-col col-span-8 gap-4">
         <ScheduleDisplay weeks={weeks} gameActions={gameActions} />
-        <JobSelector
-          currentJob={currentJob}
-          changeCurrentJob={changeCurrentJob}
-        />
+        <JobSelector currentJob={currentJob} changeCurrentJob={setCurrentJob} />
       </div>
 
       {/* right block */}
