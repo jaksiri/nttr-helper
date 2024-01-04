@@ -11,6 +11,8 @@ function DeleteGame({ gameId }: { gameId: string }) {
   async function deleteGame() {
     localStorage.removeItem("nttr-weeks-" + gameId);
     localStorage.removeItem("nttr-tasks-" + gameId);
+    localStorage.removeItem("nttr-checklist-" + gameId);
+    localStorage.removeItem("nttr-currentJob-" + gameId);
     await deleteGameAction(gameId).catch((err) => {
       console.log(err);
       toast({

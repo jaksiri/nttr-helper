@@ -1,13 +1,12 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
-import { GameAction, GameLength, Job, WeekData } from "../types";
+import { ChecklistItem, GameAction, GameLength, Job, WeekData } from "../types";
 import ScheduleDisplay from "./ScheduleDisplay";
 import Checklist from "./Checklist";
 import JobSelector from "./JobSelector";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import {
-  createGameActionDataArray,
-  createWeeksDataArray,
+  initChecklistData,
   initTasksData,
   initWeeksData,
 } from "../utils/InitFunctions";
@@ -31,6 +30,8 @@ export default function GameClientBoard({ gameId, gameLength }: Props) {
 
   const [gameActions, setGameActions] = useState<GameAction[]>([]);
 
+  const [checklistItems, setChecklistItems] = useState<ChecklistItem[]>([]);
+
   // Current States
   const [currentJob, setCurrentJob] = useLocalStorage<Job>(
     `nttr-currentJob-${gameId}`,
@@ -42,17 +43,13 @@ export default function GameClientBoard({ gameId, gameLength }: Props) {
   // Initialize Week Data
   useEffect(() => {
     setWeeks(initWeeksData(gameId, gameLength));
-  }, [gameId, gameLength]);
+    setChecklistItems(initChecklistData(gameId));
+  }, [gameId, gameLength, setChecklistItems]);
 
   // Initialize Game Actions from Local Storage
   useEffect(() => {
-    const localStorageData: Array<GameAction> = JSON.parse(
-      localStorage.getItem(`nttr-tasks-${gameId}`) || "[]"
-    );
-    if (localStorageData.length === 0 && weeks.length > 0) {
+    if (weeks.length > 0) {
       setGameActions(initTasksData(gameLength, weeks));
-    } else {
-      setGameActions(localStorageData);
     }
   }, [gameId, gameLength, weeks]);
 
@@ -60,22 +57,34 @@ export default function GameClientBoard({ gameId, gameLength }: Props) {
   useEffect(() => {
     if (gameActions.length === 0) return;
     if (new Date(Date.now()).getTime() - lastSaved.getTime() > 180000) {
-      console.log("Saving Game Actions...");
+      // Saving Checklist Item
+      localStorage.setItem(
+        `nttr-checklist-${gameId}`,
+        JSON.stringify(checklistItems)
+      );
+
+      // Saving Game Actions
       localStorage.setItem(`nttr-tasks-${gameId}`, JSON.stringify(gameActions));
+
+      // Change Last Save time
       setLastSaved(new Date(Date.now()));
     }
-  }, [gameActions, gameId, lastSaved]);
+  }, [checklistItems, gameActions, gameId, lastSaved]);
 
   return (
-    <div className="w-full rounded grid grid-cols-10 grid-rows-5 gap-4">
+    <div className="w-full rounded grid grid-cols-10 row-auto gap-4">
       <div className="flex flex-col col-span-8 gap-4">
-        <ScheduleDisplay weeks={weeks} gameActions={gameActions} />
+        {/* <ScheduleDisplay weeks={weeks} gameActions={gameActions} /> */}
         <JobSelector currentJob={currentJob} changeCurrentJob={setCurrentJob} />
       </div>
 
       {/* right block */}
       <div className="flex flex-col gap-4 w-full col-span-2 row-span-5">
-        <Checklist />
+        <Checklist
+          checklistItems={checklistItems}
+          setChecklistItems={setChecklistItems}
+          gameId={gameId}
+        />
       </div>
 
       {/* left block */}

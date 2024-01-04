@@ -1,4 +1,4 @@
-import { GameAction, GameLength, WeekData } from "../types";
+import { ChecklistItem, GameAction, GameLength, WeekData } from "../types";
 import { v4 as uuid } from "uuid";
 
 export function initWeeksData(gameId: string, gameLength: GameLength) {
@@ -8,7 +8,6 @@ export function initWeeksData(gameId: string, gameLength: GameLength) {
     return JSON.parse(weeksData);
   } else {
     // If not, create it
-    console.log("Creating New Week Data Array");
     return createWeeksDataArray(gameId, gameLength);
   }
 }
@@ -50,15 +49,49 @@ export function createWeeksDataArray(
   return weeksData;
 }
 
+export function initChecklistData(gameId: string) {
+  // Find game on local storage, if exists, load it
+  const checklistData = localStorage.getItem(`nttr-checklist-${gameId}`);
+  if (checklistData) {
+    return JSON.parse(checklistData);
+  } else {
+    // If not, create it
+    return createChecklistDataArray(gameId);
+  }
+}
+
+export function createChecklistDataArray(gameId: string) {
+  const checklistData: ChecklistItem[] = [];
+
+  checklistData.push({
+    id: uuid(),
+    gameId: gameId,
+    completed: false,
+    text: "Get a job",
+  });
+  checklistData.push({
+    id: uuid(),
+    gameId: gameId,
+    completed: false,
+    text: "Enroll in a degree",
+  });
+  checklistData.push({
+    id: uuid(),
+    gameId: gameId,
+    completed: false,
+    text: "Check the news",
+  });
+
+  return checklistData;
+}
+
 export function initTasksData(gameLength: GameLength, weeks: WeekData[]) {
   // Find game on local storage, if exists, load it
   const tasksData = localStorage.getItem(`nttr-tasks-${gameLength}`);
-  if (tasksData) {
-    console.log("Importing Tasks from Local Storage");
+  if (tasksData && tasksData?.length > 0) {
     return JSON.parse(tasksData);
   } else {
     // If not, create it
-    console.log("Creating New Tasks Data Array");
     return createGameActionDataArray(gameLength, weeks);
   }
 }

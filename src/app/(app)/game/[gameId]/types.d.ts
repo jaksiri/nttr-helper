@@ -31,3 +31,10 @@ export type Job = {
   income: number;
   location: string;
 };
+
+export type ChecklistItem = {
+  id: string;
+  gameId: string;
+  text: string;
+  completed: boolean;
+};

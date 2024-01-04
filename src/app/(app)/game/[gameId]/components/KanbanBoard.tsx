@@ -1,6 +1,6 @@
 "use client";
 import { useState, Dispatch, SetStateAction } from "react";
-import { GameAction, WeekData } from "../types";
+import { ChecklistItem, GameAction, WeekData } from "../types";
 import {
   DndContext,
   DragEndEvent,
@@ -18,10 +18,12 @@ import { useHorizontalScroll } from "../hooks/useHorizontalScroll";
 export default function KanbanBoard({
   weeks,
   tasks,
+
   setTasks,
 }: {
   weeks: WeekData[];
   tasks: GameAction[];
+
   setTasks: Dispatch<SetStateAction<GameAction[]>>;
 }) {
   const [activeTask, setActiveTask] = useState<GameAction | null>(null);
@@ -108,7 +110,7 @@ export default function KanbanBoard({
     const isActiveAColumn = active.data.current?.type === "Week";
     if (!isActiveAColumn) return;
 
-    console.log("DRAG END");
+    // console.log("DRAG END");
   }
 
   function onDragOver(event: DragOverEvent) {
@@ -149,7 +151,7 @@ export default function KanbanBoard({
         const activeIndex = tasks.findIndex((t) => t.id === activeId);
 
         tasks[activeIndex].weekId = overId.toString();
-        console.log("DROPPING TASK OVER COLUMN", activeIndex);
+        // console.log("DROPPING TASK OVER COLUMN", activeIndex);
         return arrayMove(tasks, activeIndex, activeIndex);
       });
     }
