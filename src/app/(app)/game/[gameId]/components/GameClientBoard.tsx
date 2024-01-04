@@ -23,7 +23,6 @@ const initialJobData: Job = {
 export default function GameClientBoard({ gameId, gameLength }: Props) {
   // Data States
   const [weeks, setWeeks] = useState<WeekData[]>(new Array<WeekData>());
-  const weeksId = useMemo(() => weeks.map((week) => week.id), [weeks]);
 
   const [gameActions, setGameActions] = useLocalStorage<GameAction[]>(
     `nttr-tasks-${gameId}`,
@@ -75,7 +74,6 @@ export default function GameClientBoard({ gameId, gameLength }: Props) {
       <div className="flex flex-col col-span-8 space-y-4 row-span-4">
         <KanbanBoard
           weeks={weeks}
-          weeksId={weeksId}
           tasks={gameActions}
           setTasks={setGameActions}
         />

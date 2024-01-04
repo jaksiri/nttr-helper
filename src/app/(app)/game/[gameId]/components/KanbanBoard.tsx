@@ -17,12 +17,10 @@ import { useHorizontalScroll } from "../hooks/useHorizontalScroll";
 
 export default function KanbanBoard({
   weeks,
-  weeksId,
   tasks,
   setTasks,
 }: {
   weeks: WeekData[];
-  weeksId: string[];
   tasks: GameAction[];
   setTasks: Dispatch<SetStateAction<GameAction[]>>;
 }) {
