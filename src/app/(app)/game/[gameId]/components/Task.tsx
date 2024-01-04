@@ -1,4 +1,4 @@
-import { GameAction } from "../types";
+import { GameAction, GameActionType } from "../types";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -15,7 +15,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Edit2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const GameActionType = [
+const gameActionType: GameActionType[] = [
   "rent",
   "food",
   "relax",
@@ -54,9 +54,7 @@ function Task({
 }) {
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-
-  // State Value to be changed when editing
-  const [thisTask, setThisTask] = useState<GameAction>(task);
+  const [thisNote, setThisNote] = useState<string>(task.notes);
 
   // DnD Kit
   const {
@@ -80,16 +78,10 @@ function Task({
     transition,
   };
 
-  function handleInputChange(e: any) {
-    const { name, value } = e;
-    setThisTask((prev) => ({ ...prev, [name]: value }));
+  function handleBlur() {
+    setIsEditing((prev) => !prev);
+    updateTask(task.id, { ...task, notes: thisNote });
   }
-
-  useEffect(() => {
-    if (!isEditing) {
-      updateTask(task.id, thisTask);
-    }
-  }, [task.id, thisTask, isEditing, updateTask]);
 
   if (isDragging) {
     return (
@@ -98,7 +90,7 @@ function Task({
         style={style}
         className={cn(
           "flex flex-row rounded p-3 gap-3 relative shadow-md bg-gray-50 h-[100px] min-h-[100px] opacity-50 border-2 border-dashed",
-          GameActionTypeColor[thisTask.type as keyof typeof GameActionTypeColor]
+          GameActionTypeColor[task.type as keyof typeof GameActionTypeColor]
         )}
       ></div>
     );
@@ -109,7 +101,7 @@ function Task({
       ref={setNodeRef}
       className={cn(
         "flex flex-row rounded p-3 gap-3 relative shadow-md bg-gray-50 min-h-[100px]",
-        GameActionTypeColor[thisTask.type as keyof typeof GameActionTypeColor],
+        GameActionTypeColor[task.type as keyof typeof GameActionTypeColor],
         "border-r-8 cursor-grab",
         task.completed ? "opacity-50" : ""
       )}
@@ -122,17 +114,17 @@ function Task({
       {...listeners}
     >
       <Checkbox
-        checked={thisTask.completed}
+        checked={task.completed}
         onClick={() => {
-          setThisTask((prev) => ({ ...prev, completed: !prev.completed }));
+          updateTask(task.id, { ...task, completed: !task.completed });
         }}
       />
       <div className="flex flex-col flex-grow gap-2">
         {/* <p className="text-xs font-medium">Type:</p> */}
         <Select
-          value={thisTask.type}
-          onValueChange={(x) => {
-            handleInputChange({ name: "type", value: x });
+          value={task.type}
+          onValueChange={(x: GameActionType) => {
+            updateTask(task.id, { ...task, type: x });
             setIsHovered(false);
           }}
         >
@@ -140,7 +132,7 @@ function Task({
             <SelectValue placeholder="None" />
           </SelectTrigger>
           <SelectContent>
-            {GameActionType.map((type) => (
+            {gameActionType.map((type) => (
               <SelectItem key={type} value={type}>
                 {type.charAt(0).toUpperCase() + type.slice(1)}
               </SelectItem>
@@ -152,10 +144,10 @@ function Task({
           <Textarea
             id={"note-" + task.id}
             name="notes"
-            value={thisTask.notes}
-            onChange={(e) => handleInputChange(e.target)}
+            value={task.notes}
+            onChange={(e) => setThisNote(e.target.value)}
             onBlur={() => {
-              setIsEditing(false);
+              handleBlur();
             }}
             className="w-full bg-transparent mt-[6px] mb-[6px]"
             autoFocus
@@ -163,7 +155,7 @@ function Task({
               if (e.key === "Enter" && e.shiftKey) {
                 return;
               } else if (e.key === "Enter" || e.key === "Escape") {
-                setIsEditing(false);
+                handleBlur();
               }
             }}
           />

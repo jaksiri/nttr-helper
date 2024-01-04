@@ -86,16 +86,29 @@ export function createGameActionDataArray(
       throw new Error("Invalid game length");
   }
 
+  // Single Events
+
+  // Reccurring Events
   for (let i = 1; i <= numTurns; i++) {
     if (i % 4 === 0 && i - 1 > 0) {
+      // Rent
       tasksData.push({
         id: uuid(),
         weekId: weeks[i - 1].id,
         type: "rent",
         completed: false,
-        notes: "Pay Rent",
+        notes: "",
       });
     }
+
+    // Food
+    tasksData.push({
+      id: uuid(),
+      weekId: weeks[i - 1].id,
+      type: "food",
+      completed: false,
+      notes: "",
+    });
   }
 
   return tasksData;

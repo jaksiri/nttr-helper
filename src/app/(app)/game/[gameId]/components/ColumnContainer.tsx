@@ -19,15 +19,14 @@ export default function ColumnContainer({
   deleteTask: (id: string) => void;
   updateTask: (id: string, task: GameAction) => void;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({
-      id: week.id,
-      data: {
-        type: "Week",
-        week,
-      },
-      disabled: true,
-    });
+  const { attributes, setNodeRef, transform, transition } = useSortable({
+    id: week.id,
+    data: {
+      type: "Week",
+      week,
+    },
+    disabled: true,
+  });
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -41,7 +40,6 @@ export default function ColumnContainer({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...listeners}
     >
       {/* Column Header */}
       <div id="column-header">

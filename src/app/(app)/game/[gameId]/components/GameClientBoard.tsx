@@ -5,7 +5,12 @@ import ScheduleDisplay from "./ScheduleDisplay";
 import Checklist from "./Checklist";
 import JobSelector from "./JobSelector";
 import { useLocalStorage } from "@uidotdev/usehooks";
-import { initTasksData, initWeeksData } from "../utils/InitFunctions";
+import {
+  createGameActionDataArray,
+  createWeeksDataArray,
+  initTasksData,
+  initWeeksData,
+} from "../utils/InitFunctions";
 import KanbanBoard from "./KanbanBoard";
 
 type Props = {
@@ -22,12 +27,9 @@ const initialJobData: Job = {
 
 export default function GameClientBoard({ gameId, gameLength }: Props) {
   // Data States
-  const [weeks, setWeeks] = useState<WeekData[]>(new Array<WeekData>());
+  const [weeks, setWeeks] = useState<WeekData[]>([]);
 
-  const [gameActions, setGameActions] = useLocalStorage<GameAction[]>(
-    `nttr-tasks-${gameId}`,
-    new Array<GameAction>()
-  );
+  const [gameActions, setGameActions] = useState<GameAction[]>([]);
 
   // Current States
   const [currentJob, setCurrentJob] = useLocalStorage<Job>(
@@ -35,21 +37,36 @@ export default function GameClientBoard({ gameId, gameLength }: Props) {
     initialJobData
   );
 
+  const [lastSaved, setLastSaved] = useState<Date>(new Date(Date.now()));
+
+  // Initialize Week Data
   useEffect(() => {
     setWeeks(initWeeksData(gameId, gameLength));
   }, [gameId, gameLength]);
 
+  // Initialize Game Actions from Local Storage
   useEffect(() => {
     const localStorageData: Array<GameAction> = JSON.parse(
       localStorage.getItem(`nttr-tasks-${gameId}`) || "[]"
     );
     if (localStorageData.length === 0 && weeks.length > 0) {
       setGameActions(initTasksData(gameLength, weeks));
+    } else {
+      setGameActions(localStorageData);
     }
-  }, [gameLength, weeks, setGameActions, gameId]);
+  }, [gameId, gameLength, weeks]);
+
+  // Autosaving Game Actions to Local Storage
+  useEffect(() => {
+    if (gameActions.length === 0) return;
+    if (new Date(Date.now()).getTime() - lastSaved.getTime() > 180000) {
+      console.log("Saving Game Actions...");
+      localStorage.setItem(`nttr-tasks-${gameId}`, JSON.stringify(gameActions));
+      setLastSaved(new Date(Date.now()));
+    }
+  }, [gameActions, gameId, lastSaved]);
 
   // State Mutation Functions
-
   function changeCurrentJob(job: Job) {
     setCurrentJob(job);
     localStorage.setItem(`nttr-currentJob-${gameId}`, JSON.stringify(job));

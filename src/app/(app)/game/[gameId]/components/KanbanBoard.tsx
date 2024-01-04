@@ -127,35 +127,31 @@ export default function KanbanBoard({
 
     // Im dropping a Task over another Task
     if (isActiveATask && isOverATask) {
-      setTimeout(() => {
-        setTasks((tasks) => {
-          const activeIndex = tasks.findIndex((t) => t.id === activeId);
-          const overIndex = tasks.findIndex((t) => t.id === overId);
+      setTasks((tasks) => {
+        const activeIndex = tasks.findIndex((t) => t.id === activeId);
+        const overIndex = tasks.findIndex((t) => t.id === overId);
 
-          if (tasks[activeIndex].weekId != tasks[overIndex].weekId) {
-            // Fix introduced after video recording
-            tasks[activeIndex].weekId = tasks[overIndex].weekId;
-            return arrayMove(tasks, activeIndex, overIndex - 1);
-          }
+        if (tasks[activeIndex].weekId != tasks[overIndex].weekId) {
+          // Fix introduced after video recording
+          tasks[activeIndex].weekId = tasks[overIndex].weekId;
+          return arrayMove(tasks, activeIndex, overIndex - 1);
+        }
 
-          return arrayMove(tasks, activeIndex, overIndex);
-        });
-      }, 0);
+        return arrayMove(tasks, activeIndex, overIndex);
+      });
     }
 
     const isOverAColumn = over.data.current?.type === "Week";
 
     // Im dropping a Task over a column
     if (isActiveATask && isOverAColumn) {
-      setTimeout(() => {
-        setTasks((tasks) => {
-          const activeIndex = tasks.findIndex((t) => t.id === activeId);
+      setTasks((tasks) => {
+        const activeIndex = tasks.findIndex((t) => t.id === activeId);
 
-          tasks[activeIndex].weekId = overId.toString();
-          console.log("DROPPING TASK OVER COLUMN", activeIndex);
-          return arrayMove(tasks, activeIndex, activeIndex);
-        });
-      }, 0);
+        tasks[activeIndex].weekId = overId.toString();
+        console.log("DROPPING TASK OVER COLUMN", activeIndex);
+        return arrayMove(tasks, activeIndex, activeIndex);
+      });
     }
   }
 }
