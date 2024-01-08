@@ -118,6 +118,7 @@ export async function createGameAction(formData: createGameFormData) {
   } catch (err) {
     throw new Error("Error creating game");
   }
+  revalidatePath("/dashboard");
 }
 
 export async function deleteGameAction(gameId: string) {

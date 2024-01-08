@@ -6,7 +6,7 @@ import PocketBase, {
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 export const POCKET_BASE_URL =
-  process.env.POCKET_BASE_URL || "http://127.0.0.1:8090";
+  process.env.POCKET_BASE_URL || "http://pocketbase.db/";
 
 class DatabaseClient {
   private client: PocketBase;
