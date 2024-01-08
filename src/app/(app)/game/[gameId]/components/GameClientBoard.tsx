@@ -22,6 +22,7 @@ const initialJobData: Job = {
   name: "",
   income: 0,
   location: "",
+  experienceRequired: 0,
 };
 
 export default function GameClientBoard({ gameId, gameLength }: Props) {
@@ -33,9 +34,9 @@ export default function GameClientBoard({ gameId, gameLength }: Props) {
   const [checklistItems, setChecklistItems] = useState<ChecklistItem[]>([]);
 
   // Current States
-  const [currentJob, setCurrentJob] = useLocalStorage<Job>(
+  const [currentJob, setCurrentJob] = useLocalStorage<Job | undefined>(
     `nttr-currentJob-${gameId}`,
-    initialJobData
+    undefined
   );
 
   const [lastSaved, setLastSaved] = useState<Date>(new Date(Date.now()));

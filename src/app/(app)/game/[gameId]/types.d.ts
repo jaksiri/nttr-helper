@@ -30,6 +30,7 @@ export type Job = {
   name: string;
   income: number;
   location: string;
+  experienceRequired: number;
 };
 
 export type ChecklistItem = {
